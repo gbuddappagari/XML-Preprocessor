@@ -129,7 +129,7 @@ class Preprocessor():
                 result = group_elif_else
             else:
                 result = group_else
-            xml_str = xml_str.replace(group_full, result)
+            xml_str = xml_str.replace(group_full, result+"\n")
         matches = re.findall(if_else_regex, xml_str)
         for group_full, group_if, group_if_else, group_else in matches:
             result = ""
@@ -137,13 +137,15 @@ class Preprocessor():
                 result = group_if_else
             else:
                 result = group_else
-            xml_str = xml_str.replace(group_full, result)
+            xml_str = xml_str.replace(group_full, result+"\n")
         matches = re.findall(if_regex, xml_str)
         for group_full, group_if, group_text in matches:
             result = ""
             if group_if == "True":
                 result = group_text
-            xml_str = xml_str.replace(group_full, result)
+                xml_str = xml_str.replace(group_full, result+"\n")
+            else:
+                xml_str = xml_str.replace(group_full, result)
         return xml_str
 
     def parse_command(self, xml_str):
@@ -159,8 +161,8 @@ class Preprocessor():
         return xml_str
 
     def format_xml_str(self, xml_str):
-        right_blank_regex = r"(>[\n\s\t\r]*)"
-        left_blank_regex = r"([\n\s\t\r]*<)"
+        right_blank_regex = r"(>[\t\r]*)"
+        left_blank_regex = r"([\t\r]*<)"
         matches = re.findall(right_blank_regex, xml_str)
         for group_full in matches:
             xml_str = xml_str.replace(group_full, ">")
