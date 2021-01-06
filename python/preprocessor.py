@@ -117,11 +117,11 @@ class Preprocessor():
         return xml_str
 
     def parse_if_else_if(self, xml_str):
-        if_elif_else_regex = r"(<\?if\s(True|False)\?>\n(.*)\n<\?elseif\s(True|False)\?>\n(.*)\n<\?else\?>\n(.*)\n<\?endif\?>\n)"
-        if_else_regex = r"(<\?if\s(True|False)\?>\n(.*)\n<\?else\?>\n(.*)\n<\?endif\?>\n)"
-        if_regex = r"(<\?if\s(True|False)\?>\n(.*)\n<\?endif\?>\n)"
+        if_elif_else_regex = r"(<\?if\s(True|False)\?>\n((.(?!<\?))*)\n<\?elseif\s(True|False)\?>\n((.(?!<\?))*)\n<\?else\?>\n((.(?!<\?))*)\n<\?endif\?>\n)"
+        if_else_regex = r"(<\?if\s(True|False)\?>\n((.(?!<\?))*)\n<\?else\?>\n((.(?!<\?))*)\n<\?endif\?>\n)"
+        if_regex = r"(<\?if\s(True|False)\?>\n((.(?!<\?))*)\n<\?endif\?>\n)"
         matches = re.findall(if_elif_else_regex, xml_str, re.DOTALL)
-        for group_full, group_if, group_if_elif, group_elif, group_elif_else, group_else in matches:
+        for group_full, group_if, group_if_elif,group_none, group_elif, group_elif_else,group_none, group_else, group_none in matches:
             result = ""
             if group_if == "True":
                 result = group_if_elif
@@ -131,7 +131,7 @@ class Preprocessor():
                 result = group_else
             xml_str = xml_str.replace(group_full, result+"\n")
         matches = re.findall(if_else_regex, xml_str, re.DOTALL)
-        for group_full, group_if, group_if_else, group_else in matches:
+        for group_full, group_if, group_if_else, group_none, group_else, group_none in matches:
             result = ""
             if group_if == "True":
                 result = group_if_else
@@ -139,7 +139,7 @@ class Preprocessor():
                 result = group_else
             xml_str = xml_str.replace(group_full, result+"\n")
         matches = re.findall(if_regex, xml_str, re.DOTALL)
-        for group_full, group_if, group_text in matches:
+        for group_full, group_if, group_text, group_none in matches:
             result = ""
             if group_if == "True":
                 result = group_text
