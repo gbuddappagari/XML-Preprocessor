@@ -120,7 +120,7 @@ class Preprocessor():
         if_elif_else_regex = r"(<\?if\s(True|False)\?>\n(.*)\n<\?elseif\s(True|False)\?>\n(.*)\n<\?else\?>\n(.*)\n<\?endif\?>\n)"
         if_else_regex = r"(<\?if\s(True|False)\?>\n(.*)\n<\?else\?>\n(.*)\n<\?endif\?>\n)"
         if_regex = r"(<\?if\s(True|False)\?>\n(.*)\n<\?endif\?>\n)"
-        matches = re.findall(if_elif_else_regex, xml_str)
+        matches = re.findall(if_elif_else_regex, xml_str, re.DOTALL)
         for group_full, group_if, group_if_elif, group_elif, group_elif_else, group_else in matches:
             result = ""
             if group_if == "True":
@@ -130,7 +130,7 @@ class Preprocessor():
             else:
                 result = group_else
             xml_str = xml_str.replace(group_full, result+"\n")
-        matches = re.findall(if_else_regex, xml_str)
+        matches = re.findall(if_else_regex, xml_str, re.DOTALL)
         for group_full, group_if, group_if_else, group_else in matches:
             result = ""
             if group_if == "True":
@@ -138,7 +138,7 @@ class Preprocessor():
             else:
                 result = group_else
             xml_str = xml_str.replace(group_full, result+"\n")
-        matches = re.findall(if_regex, xml_str)
+        matches = re.findall(if_regex, xml_str, re.DOTALL)
         for group_full, group_if, group_text in matches:
             result = ""
             if group_if == "True":
@@ -190,11 +190,8 @@ class Preprocessor():
             self.parse_error_warning,
             self.parse_foreach,
             self.parse_if_else_if,
-            self.parse_command,
-            self.format_xml_str
-        ]
+            self.parse_command,        ]
         xml_str = self.original_file["content"]
-        xml_str = self.format_xml_str(xml_str)
         while(self.need_parse(xml_str)):
             for i in range(len(proc_functions)):
                 xml_str = proc_functions[i](xml_str)
@@ -203,11 +200,9 @@ class Preprocessor():
     def save(self, file_path):
         self.processed_file["file"] = file_path
         xml_str = self.processed_file["content"]
-        root = etree.fromstring(xml_str)
         try:
             with open(file_path, "w") as processed_file:
-                processed_file.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
-                processed_file.write(etree.tostring(root, pretty_print=True))
+                processed_file.write(xml_str)
             return 0
         except:
             return -1
