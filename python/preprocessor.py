@@ -190,7 +190,8 @@ class Preprocessor():
             self.parse_error_warning,
             self.parse_foreach,
             self.parse_if_else_if,
-            self.parse_command,        ]
+            self.parse_command
+        ]
         xml_str = self.original_file["content"]
         while(self.need_parse(xml_str)):
             for i in range(len(proc_functions)):
